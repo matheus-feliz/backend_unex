@@ -11,8 +11,48 @@ router.get('/',(req , res)=>{
     }catch(e){
     };
 });
-router.get('/list', (req, res) =>{
-    execSQLQuery('SELECT * FROM VW_LOGIN_ACESSO_API', res);
+router.get('/list', async (req, res) =>{
+    res.send(await execSQLQuery('SELECT * FROM VW_LOGIN_ACESSO_API'));
 });
+
+router.put('/alterauser',async (req,res)=>{
+    try {
+        let {
+          id,nome, registro, data_de_nascimento, telefone, celular,email, usuario, senha, tipo_usuario,
+        } = req.body;
+       if(tipo_usuario == 'aluno'|| tipo_usuario == 'ALUNO' ){
+        return res.send('USUARIO NÃO AUTORIZADO')
+       }else{
+        senha = bcrypt.hashSync(senha, bcrypt.genSaltSync());
+        let result = await execSQLQuery(
+          `EXEC SP_USUARIO_UPDATE ${
+            "'" + id+"','"+ nome +"','" + registro + "'," + data_de_nascimento + "," + telefone + ",'" + celular + "','" + email + "','" + usuario +"','" +senha + "'" } `
+        );
+        return res.send(result.message);
+       }
+      } catch (err) {
+        console.warn(err);
+      }
+});
+
+router.delete('/deleteuser', async(req,res)=>{
+    try{
+        let {
+            id,
+            tipo_usuario
+          } = req.body;
+         if(tipo_usuario == 'aluno' || tipo_usuario == 'ALUNO' ){
+            return res.send('USUARIO NÃO AUTORIZADO')
+        }else{
+           let result = await execSQLQuery(
+                `EXEC SP_USUARIO_DELETE ${
+                    "'" + id +"'"} `
+                    );
+          res.send(result.message);          
+         }
+    }catch(err){
+        console.warn(err)
+    }
+})
 
 module.exports = app => app.use('/user',router);
