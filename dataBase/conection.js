@@ -6,11 +6,15 @@ sql.connect(connStr)
     console.log('certo')})
    .catch(err => console.log(err));
 
-   const execSQLQuery = async function (sqlQry, res){
-    global.conn.request()
+   const execSQLQuery = async function (sqlQry){
+      let sql;
+    await global.conn.request()
                .query(sqlQry)
-               .then(result => res.json(result.recordset))
-               .catch(err => res.json(err));
+               .then(result => {
+                  sql = result.recordset
+               })
+               .catch(err =>{sql=err});
+               return sql;
 }
 
 module.exports = {sql, execSQLQuery};
