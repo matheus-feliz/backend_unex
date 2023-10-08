@@ -1,5 +1,5 @@
 sql  = require ( 'mssql' ) 
-const connStr ='';
+const connStr ='Server=sql5094.site4now.net;Database=db_a9df84_unexutility;User Id=db_a9df84_unexutility_admin;Password=unex03*25*03;Encrypt=true';
 
 sql.connect(connStr)
    .then(conn => {global.conn = conn;

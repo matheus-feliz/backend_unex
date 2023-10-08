@@ -15,7 +15,7 @@ router.get('/list', async (req, res) =>{
     res.send(await execSQLQuery('SELECT * FROM VW_LOGIN_ACESSO_API'));
 });
 
-router.put('/alterauser',async (req,res)=>{
+router.put('/altera',async (req,res)=>{
     try {
         let {
           id,nome, registro, data_de_nascimento, telefone, celular,email, usuario, senha, tipo_usuario,
@@ -35,7 +35,7 @@ router.put('/alterauser',async (req,res)=>{
       }
 });
 
-router.delete('/deleteuser', async(req,res)=>{
+router.delete('/delete', async(req,res)=>{
     try{
         let {
             id,
