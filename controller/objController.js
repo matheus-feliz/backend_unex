@@ -1,99 +1,147 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const {execSQLQuery} =require('../dataBase/conection');
-const middlewareAuth = require('../middlewares/auth');
-const multer = require('multer');
-const config = require('../config/multer');
+const { execSQLQuery } = require("../dataBase/conection");
+const middlewareAuth = require("../middlewares/auth");
+const multer = require("multer");
+const config = require("../config/multer");
+const tipo = require("../config/tipoUser");
 
-const upload = multer(config).array('foto');
+const upload = multer(config).array("foto");
 
 router.use(middlewareAuth);
 
-router.post('/register',async(req,res)=>{
-    try{
-            upload(req,res, async err=>{
-                let {nome,descricao,local,status,nome_do_dono,telefone, id_pessoa,tipo_usuario}=req.body;
-                if(tipo_usuario == 'aluno' || tipo_usuario == 'ALUNO'){
-                    return res.send('USUARIO NÃO AUTORIZADO')
-                }else{
-                if(err){
-                    return res.send(err.code)
-                }
-                let sql=""
-              for(i = 0;i < req.files.length;i++){
-                var str = req.files[i].originalname.replace(/\s/g, '')
-                sql += `${",'"+str+"','"+req.files[i].filename+ "','"+'https://backend-unex.vercel.app/'+ req.files[i].filename +"'"}`
-              }
-              const result = await execSQLQuery(`EXEC SP_ACHADOS_INSERT ${req.files.length} ${",'"+nome+"','"+descricao+"','"+local+"','"+status+"','"+nome_do_dono+"','"+telefone+"',"} ${id_pessoa} ${sql}`)
-                return res.send(result.message)
-            }})
-        
-    }catch(err){
-        
-    }
-
-});
-
-router.put('/atualizar',async(req,res)=>{
-    try{
-        let {
-            id,
-            nome,
-            descricao,
-            local,
-            nome_do_dono,
-            telefone,
-            tipo_usuario
-          } = req.body;
-        if(tipo_usuario == 'aluno' || tipo_usuario == 'ALUNO' ){
-            return res.send('USUARIO NÃO AUTORIZADO')
-        }else{
-        const result =  await execSQLQuery(`EXEC SP_ACHADOS_UPDATE ${"'"+id+"',"+nome+"','"+descricao+"','"+local+"','"+nome_do_dono+"','"+telefone+"'"}`);
-        return res.send(result.message); 
-        }
-       }catch(err){
-    
-       }
-
-});
-
-router.delete('/delete',async(req,res)=>{
-   try{
-    let {
-        id,
-        tipo_usuario
+router.post("/register", async (req, res) => {
+  try {
+    upload(req, res, async (err) => {
+      let {
+        nome,
+        descricao,
+        local,
+        status,
+        nome_do_dono,
+        telefone_dono_item,
+        id_pessoa,
+        tipo_usuario,
+        categoria,
+        celular,
+        identificacao,
+        unidade,
       } = req.body;
-    if(tipo_usuario == 'aluno' || tipo_usuario == 'ALUNO' ){
-        return res.send('USUARIO NÃO AUTORIZADO')
-    }else{
-    const result =  await execSQLQuery(`EXEC SP_ACHADOS_DELETE ${"'"+id+"'"}`);
-    return res.send(result.message); 
+      if (tipo(tipo_usuario)) {
+          let sql = "";
+          for (i = 0; i < req.files.length; i++) {
+            var str = req.files[i].originalname.replace(/\s/g, "");
+            sql += `${
+              ",'" +
+              str +
+              "','" +
+              req.files[i].filename +
+              "','" +
+              "https://backend-unex.vercel.app/" +
+              req.files[i].filename +
+              "'"
+            }`;
+          }
+          const result = await execSQLQuery(
+            `EXEC SP_ACHADOS_INSERT ${req.files.length} ${
+              ",'" +
+              nome +
+              "','" +
+              descricao +
+              "','" +
+              local +
+              "','" +
+              status +
+              "','" +
+              nome_do_dono +
+              "','" +
+              telefone_dono_item+
+              "','"+categoria+"','"+celular+"','"+identificacao+"','"+unidade+"',"
+            } ${id_pessoa} ${sql}`
+          );
+          return res.send(result.message);
+      } else {
+        return res.send("UNAUTHORIZED USER"); 
+      }
+    });
+  } catch (err) {}
+});
+
+router.put("/atualizar", async (req, res) => {
+  try {
+    let { id, nome, descricao, local, nome_do_dono, telefone_dono_item, tipo_usuario,  categoria,
+        celular,
+        identificacao,
+        unidade, } =
+      req.body;
+    if (tipo(tipo_usuario)) {
+        const result = await execSQLQuery(
+            `EXEC SP_ACHADOS_UPDATE ${
+              "" +
+              id +
+              ",'" +
+              nome +
+              "','" +
+              descricao +
+              "','" +
+              local +
+              "','" +
+              nome_do_dono +
+              "','" +
+              telefone_dono_item +
+              "','"+categoria+"','"+celular+"','"+identificacao+"','"+unidade+"'"
+            }`
+          );
+          return res.send(result.message);
+    } else {
+      return res.send("UNAUTHORIZED USER"); 
     }
-   }catch(err){
+  } catch (err) {}
+});
 
-   }
-})
+router.delete("/delete", async (req, res) => {
+  try {
+    let { id, tipo_usuario } = req.body;
+    if (tipo(tipo_usuario)) {
+      const result = await execSQLQuery(
+        `EXEC SP_ACHADOS_DELETE ${"" + id + ""}`
+      );
+      return res.send(result.message);
+    } else {
+        return res.send("UNAUTHORIZED USER"); 
+    }
+  } catch (err) {}
+});
 
-router.post('/finalizar',async(req,res)=>{
-    try{
-        let {
-            id,
-            tipo_usuario,
-            tipo_achados
-          } = req.body;
-        if(tipo_usuario == 'aluno' || tipo_usuario == 'ALUNO' ){
-            return res.send('USUARIO NÃO AUTORIZADO')
-        }else{
-        const result =  await execSQLQuery(`EXEC SP_ACHADOS_FINALIZA ${"'"+id+"','"+tipo_achados+"'"}`);
-        return res.send(result.message); 
-        }
-       }catch(err){
-    
-       }
-    
-})
-router.get('/list',async(req,res)=>{
-    res.send(await execSQLQuery('SELECT * from VW_ACHADOS'));    
-})
+router.post("/finalizar", async (req, res) => {
+  try {
+    let { id, tipo_usuario, tipo_achados } = req.body;
+    if (tipo(tipo_usuario)) {
+        const result = await execSQLQuery(
+            `EXEC SP_ACHADOS_FINALIZA ${"" + id + ",'" + tipo_achados + "'"}`
+          );
+          return res.send(result.message);
+    } else {
+      return res.send("UNAUTHORIZED USER");    }
+  } catch (err) {}
+});
+router.get("/list", async (req, res) => {
+  res.send(await execSQLQuery("SELECT * from VW_ACHADOS"));
+});
 
-module.exports = app => app.use('/obj',router)
+router.post("/listid", async (req, res) => {
+  try {
+    let { id, tipo_usuario } = req.body;
+
+    if (tipo(tipo_usuario)) {
+      const result = await execSQLQuery(`EXEC SP_LIST_OBJ_ID${"" + id + ""}`);
+      return res.send(result);
+    } else {
+      return res
+        .status(400)
+        .send("UNAUTHORIZED USER");
+    }
+  } catch (err) {}
+});
+
+module.exports = (app) => app.use("/obj", router);
