@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const secret = require("../config/secret");
 const { execSQLQuery } = require("../dataBase/conection");
 const bcrypt = require("bcrypt");
+const tipo = require('../config/tipoUser');
 
 router.post("/login", async (req, res) => {
   try {
@@ -28,6 +29,7 @@ router.post("/register", async (req, res) => {
     let {
       nome, registro, data_de_nascimento, telefone, celular,email, usuario, senha, tipo_usuario,
     } = req.body;
+  if(tipo(tipo_usuario)){
     senha = bcrypt.hashSync(senha, bcrypt.genSaltSync());
     let result = await execSQLQuery(
       `EXEC SP_USUARIO_INSERT ${
@@ -35,6 +37,9 @@ router.post("/register", async (req, res) => {
       } `
     );
     res.send(result.message);
+  }else{
+    return res.send("User type must be student, employee or teacher"); 
+  }
   } catch (err) {
     console.warn(err);
   }
