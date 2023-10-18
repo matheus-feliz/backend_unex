@@ -37,7 +37,7 @@ router.post("/register", async (req, res) => {
               "','" +
               req.files[i].filename +
               "','" +
-              "http://localhost:3000/" +
+              "https://backendunex-production.up.railway.app/" +
               req.files[i].filename +
               "'"
             }`;
