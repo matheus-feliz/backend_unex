@@ -1,5 +1,5 @@
 
 module.exports = function(tipo_user){
-    const tipo = {aluno:'aluno',funcionario:'funcionario',professor:'professor'}
+    const tipo = {admin: 'admin',administrador:'administrador'}
     return tipo[tipo_user]
 }
