@@ -4,7 +4,8 @@ const connStr ='Server=sql5094.site4now.net;Database=db_a9df84_unexutility;User 
 const connect = async()=>{
    await sql.connect(connStr)
    .then(conn => {global.conn = conn;
-    console.log('certo')})
+   // console.log('certo')
+   })
    .catch(err => console.log(err));
 }
 
