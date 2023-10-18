@@ -4,7 +4,7 @@ const { execSQLQuery } = require("../dataBase/conection");
 const middlewareAuth = require("../middlewares/auth");
 const multer = require("multer");
 const config = require("../config/multer");
-const tipo = require("../config/tipoUser");
+const {tipo} = require("../config/tipoUser");
 
 const upload = multer(config).array("foto");
 
