@@ -14,7 +14,7 @@ app.use(express.static(resolve(__dirname, 'uploads')))
 require('./controller/UserController')(app)
 require('./controller/authController')(app)
 require('./controller/objController')(app)
-const PORT = 3000
+const PORT = process.env.PORT || 3000;
 app.listen(PORT,()=>{
     if (!fs.existsSync(resolve(__dirname, 'uploads'))){
         fs.mkdirSync(resolve(__dirname, 'uploads'));
