@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const {connect} = require('./dataBase/conection') 
 const cors = require('cors')
 const {resolve} = require('path');
+const fs = require('fs')
 
 connect();
 app.use(cors());
@@ -15,6 +16,9 @@ require('./controller/authController')(app)
 require('./controller/objController')(app)
 const PORT = 3000
 app.listen(PORT,()=>{
+    if (!fs.existsSync(resolve(__dirname, 'uploads'))){
+        fs.mkdirSync(resolve(__dirname, 'uploads'));
+    }
     console.log("acesse http://localhost:"+PORT);
 })
 

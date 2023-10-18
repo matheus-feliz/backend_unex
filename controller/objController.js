@@ -37,7 +37,7 @@ router.post("/register", async (req, res) => {
               "','" +
               req.files[i].filename +
               "','" +
-              "https://backend-unex.vercel.app/" +
+              "http://localhost:3000/" +
               req.files[i].filename +
               "'"
             }`;
