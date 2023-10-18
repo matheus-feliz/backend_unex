@@ -19,7 +19,7 @@ app.listen(PORT,()=>{
     if (!fs.existsSync(resolve(__dirname, 'uploads'))){
         fs.mkdirSync(resolve(__dirname, 'uploads'));
     }
-    console.log("acesse http://localhost:"+PORT);
+    //console.log("acesse http://localhost:"+PORT);
 })
 
 
